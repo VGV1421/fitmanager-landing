@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitManager - Dashboard Kanban</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            // 60% Neutral (dark grays)
+            neutral: { 900: '#0a0a0a', 800: '#121212', 700: '#1a1a1a', 600: '#242424', 500: '#2a2a2a', 400: '#404040' },
+            // 30% Brand (purple)
+            brand: { 50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7c3aed', 800: '#6b21a8', 900: '#581c87' },
+            // 10% Accent (vibrant for CTAs)
+            accent: { red: '#ef4444', orange: '#f97316', yellow: '#eab308', green: '#22c55e', blue: '#3b82f6' }
+          },
+          boxShadow: {
+            'glass': '0 8px 32px rgba(0, 0, 0, 0.4)',
+            'glow': '0 0 40px rgba(124, 58, 237, 0.15)',
+            'card': '0 4px 16px rgba(0, 0, 0, 0.3)'
+          },
+          backdropBlur: { xs: '2px', sm: '4px', md: '8px', lg: '12px', xl: '16px', '2xl': '24px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { scrollbar-width: thin; scrollbar-color: rgba(124, 58, 237, 0.4) transparent; }
+    *::-webkit-scrollbar { width: 6px; height: 6px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.4); border-radius: 3px; }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.6); }
+    
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: 
+        radial-gradient(ellipse at top, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 50%, #0a0a0a 100%);
+      min-height: 100vh;
+    }
+    
+    /* Glassmorphism - iPhone Control Center Style */
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .glass-card {
+      background: rgba(30, 30, 30, 0.6);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    
+    .glass-strong {
+      background: rgba(40, 40, 40, 0.7);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Icons - Consistent 1.5px stroke */
+    .icon { stroke-width: 1.5; }
+    
+    /* Kanban interactions */
+    .kanban-column { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .kanban-column.drag-over { 
+      background: rgba(124, 58, 237, 0.12); 
+      border: 2px dashed rgba(124, 58, 237, 0.4); 
+      transform: scale(1.01);
+    }
+    
+    .kanban-card { 
+      cursor: grab; 
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .kanban-card:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border-color: rgba(124, 58, 237, 0.2);
+    }
+    .kanban-card:active { cursor: grabbing; transform: scale(0.985); }
+    .kanban-card.dragging { opacity: 0.4; transform: rotate(2deg) scale(1.02); }
+    
+    /* Tabs */
+    .tab-btn { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+    .tab-btn::after { 
+      content: ''; 
+      position: absolute; 
+      bottom: -12px; 
+      left: 0; 
+      right: 0; 
+      height: 2px; 
+      background: linear-gradient(90deg, #a855f7, #c084fc); 
+      transform: scaleX(0); 
+      transition: transform 0.25s;
+      border-radius: 2px 2px 0 0;
+    }
+    .tab-btn.active::after { transform: scaleX(1); }
+    .tab-btn.active { background: rgba(124, 58, 237, 0.12); }
+    
+    /* Project links */
+    .project-link { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .project-link:hover { transform: translateX(3px); background: rgba(124, 58, 237, 0.1); }
+    
+    /* Status dots with glow */
+    .status-dot { box-shadow: 0 0 8px currentColor; }
+    
+    /* Priority badges */
+    .priority-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.02em; }
+    .priority-high { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .priority-medium { background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+    .priority-low { background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
+    
+    /* Count badges */
+    .count-badge { 
+      background: rgba(124, 58, 237, 0.15); 
+      color: #c084fc; 
+      font-size: 11px; 
+      font-weight: 600; 
+      padding: 2px 7px; 
+      border-radius: 6px; 
+      min-width: 22px; 
+      text-align: center;
+      border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+    
+    /* Pulse animation for live indicator */
+    .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    
+    /* Empty state */
+    .empty-state { 
+      border: 2px dashed rgba(255, 255, 255, 0.06); 
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.01);
+    }
+  </style>
+</head>
+<body class="text-gray-100">
+
+  <!-- Top Bar - Glassmorphism -->
+  <div class="sticky top-0 z-50 glass border-b border-white/5">
+    <div class="max-w-[1800px] mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-500 flex items-center justify-center shadow-glow">
+            <svg class="w-6 h-6 text-white icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white tracking-tight">FitManager Kanban</h1>
+            <p class="text-gray-500 text-xs mt-0.5">Gestiona tu negocio de forma visual</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+          <div class="text-right hidden sm:block">
+            <p class="text-gray-600 text-xs uppercase tracking-wide font-medium">Actualizado</p>
+            <p class="text-gray-300 text-sm font-mono" id="last-update">8:45:29 PM</p>
+          </div>
+          <button onclick="resetBoard()" class="px-4 py-2.5 glass hover:bg-white/5 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-all hover:scale-105 active:scale-95" title="Volver al estado inicial">
+            <svg class="w-4 h-4 icon inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Reiniciar
+          </button>
+          <div class="w-px h-8 bg-white/5 hidden sm:block"></div>
+          <button onclick="toggleSettings()" class="p-2.5 glass hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all" title="Ver estadísticas">
+            <svg class="w-5 h-5 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Quick Links -->
+  <div class="border-b border-white/5 bg-neutral-900/50">
+    <div class="max-w-[1800px] mx-auto px-6 py-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-gray-600 text-xs font-medium uppercase tracking-wide mr-1">Proyectos:</span>
+        <a href="https://fitmanager-chi.vercel.app" target="_blank" class="project-link flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/3 hover:border-brand-500/30 transition-all">
+          <span class="w-2 h-2 rounded-full bg-accent-green pulse-dot"></span>
+          <span class="text-gray-300 text-xs font-medium">App</span>
+          <svg class="w-3 h-3 text-gray-600 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+        <a href="https://fitmanager-landing.vercel.app" target="_blank" class="project-link flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/3 hover:border-brand-500/30 transition-all">
+          <span class="w-2 h-2 rounded-full bg-accent-green pulse-dot"></span>
+          <span class="text-gray-300 text-xs font-medium">Landing</span>
+          <svg class="w-3 h-3 text-gray-600 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+        <a href="https://fitmanager-landing.vercel.app/kanban.html" target="_blank" class="project-link flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/3 hover:border-brand-500/30 transition-all">
+          <span class="w-2 h-2 rounded-full bg-accent-blue pulse-dot"></span>
+          <span class="text-gray-300 text-xs font-medium">Kanban</span>
+          <svg class="w-3 h-3 text-gray-600 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+        </a>
+        <a href="https://supabase.com/dashboard/project/jnxahmqtrowabajbjade" target="_blank" class="project-link flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/3 hover:border-accent-green/30 transition-all">
+          <span class="w-2 h-2 rounded-full bg-accent-green"></span>
+          <span class="text-gray-300 text-xs font-medium">Base de datos</span>
+          <svg class="w-3 h-3 text-gray-600 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+        <a href="https://github.com/VGV1421/vanessa-vault" target="_blank" class="project-link flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/3 hover:border-gray-600/30 transition-all">
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="text-gray-300 text-xs font-medium">Código</span>
+          <svg class="w-3 h-3 text-gray-600 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-white/5 bg-neutral-900/80 sticky top-[73px] z-40">
+    <div class="max-w-[1800px] mx-auto px-6 py-3 flex gap-2 overflow-x-auto">
+      <button onclick="showTab('app')" id="tab-app" class="tab-btn active px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap">
+        <span class="flex items-center gap-2">
+          <span>💻</span>
+          <span>FitManager App</span>
+        </span>
+      </button>
+      <button onclick="showTab('ventas')" id="tab-ventas" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap">
+        <span class="flex items-center gap-2">
+          <span>📈</span>
+          <span>Ventas Pipeline</span>
+        </span>
+      </button>
+      <button onclick="showTab('tareas')" id="tab-tareas" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap">
+        <span class="flex items-center gap-2">
+          <span>✅</span>
+          <span>Tareas Semanales</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Crypto Trading Dashboard -->
+  <div class="border-b border-white/5 bg-neutral-900/50">
+    <div class="max-w-[1800px] mx-auto px-6 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center shadow-lg">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white">Crypto Trading Bot</h2>
+            <p class="text-gray-500 text-xs">Binance Testnet • Estrategia RSI • Actualización automática cada 6h</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-accent-green pulse-dot"></span>
+          <span class="text-accent-green text-sm font-medium">En Vivo</span>
+        </div>
+      </div>
+      
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="crypto-stats">
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-gray-500 text-xs uppercase tracking-wide">Balance Total</span>
+          </div>
+          <p class="text-2xl font-bold text-white font-mono" id="stat-balance">$10,000.00</p>
+          <p class="text-gray-600 text-xs mt-1">USDT disponibles</p>
+        </div>
+        
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span class="text-gray-500 text-xs uppercase tracking-wide">PnL Total</span>
+          </div>
+          <p class="text-2xl font-bold text-accent-green font-mono" id="stat-pnl" class="text-accent-green">$+0.00</p>
+          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">+0.00%/p>
+        </div>
+        
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            <span class="text-gray-500 text-xs uppercase tracking-wide">Posiciones Abiertas</span>
+          </div>
+          <p class="text-2xl font-bold text-white font-mono" id="stat-positions">0/5</p>
+          <p class="text-gray-600 text-xs mt-1">Máximo 5 simultáneas</p>
+        </div>
+        
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span class="text-gray-500 text-xs uppercase tracking-wide">Win Rate</span>
+          </div>
+          <p class="text-2xl font-bold text-brand-400 font-mono" id="stat-winrate">0.0%</p>
+          <p class="text-gray-600 text-xs mt-1" id="stat-trades">0 trades totales</p>
+        </div>
+      </div>
+      
+      <!-- Last Update -->
+      <div class="mt-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/3/2026, 8:45:29 PM</span></span>
+          <span class="text-gray-700 text-xs">•</span>
+          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/4/2026, 2:45:29 AM</span></span>
+        </div>
+        <a href="https://testnet.binance.vision/" target="_blank" class="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors flex items-center gap-1">
+          Ver en Binance Testnet
+          <svg class="w-3 h-3 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kanban Boards -->
+  <main class="p-6 overflow-x-auto">
+    <div class="max-w-[1800px] mx-auto">
+      
+      <!-- Tab 1: FitManager App -->
+      <div id="board-app" class="board">
+        <div class="grid grid-cols-4 gap-4 min-w-[1000px]">
+          <!-- Por Hacer -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="por-hacer" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-gray-500 status-dot" style="color: #6b7280;"></span>
+                <h3 class="text-white font-semibold text-sm">Pendientes</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-por-hacer">
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="app-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔴 Revisar bugs reportados</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Una usuaria reportó fallos. Necesita testing exhaustivo para identificar el problema.</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Hoy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- En Progreso -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="en-progreso" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-yellow status-dot" style="color: #eab308;"></span>
+                <h3 class="text-white font-semibold text-sm">En Curso</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso"></div>
+          </div>
+
+          <!-- Hecho -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="hecho" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-green status-dot" style="color: #22c55e;"></span>
+                <h3 class="text-white font-semibold text-sm">Completado</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-hecho">
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="app-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ MVP de la app listo</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Todas las funcionalidades principales implementadas y desplegadas.</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 01 Mar</span>
+                </div>
+              </div>
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="app-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ Landing publicada</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">https://fitmanager-landing.vercel.app</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 02 Mar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloqueado -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="bloqueado" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-red status-dot" style="color: #ef4444;"></span>
+                <h3 class="text-white font-semibold text-sm">Bloqueado</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-bloqueado">
+              <div class="empty-state p-6 text-center">
+                <svg class="w-8 h-8 text-gray-700 icon mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-gray-600 text-xs">Sin elementos bloqueados</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Ventas Pipeline -->
+      <div id="board-ventas" class="board hidden">
+        <div class="grid grid-cols-4 gap-4 min-w-[1000px]">
+          <!-- Prospect -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="prospect" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-gray-500 status-dot" style="color: #6b7280;"></span>
+                <h3 class="text-white font-semibold text-sm">Prospects</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="ventas-prospect">
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="ventas-1">
+                <p class="text-white text-sm font-medium leading-snug mb-2">📋 Lista de 20 entrenadores</p>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Buscar en Instagram con #entrenadorpersonal y #personaltrainer</p>
+                <span class="text-gray-600 text-xs">📅 Esta semana</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contactado -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="contactado" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-blue status-dot" style="color: #3b82f6;"></span>
+                <h3 class="text-white font-semibold text-sm">Contactados</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="ventas-contactado"></div>
+          </div>
+
+          <!-- Demo -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="demo" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-yellow status-dot" style="color: #eab308;"></span>
+                <h3 class="text-white font-semibold text-sm">Demo</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="ventas-demo"></div>
+          </div>
+
+          <!-- Cliente -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="cliente" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-green status-dot" style="color: #22c55e;"></span>
+                <h3 class="text-white font-semibold text-sm">Clientes</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="ventas-cliente"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Tareas Semanales -->
+      <div id="board-tareas" class="board hidden">
+        <div class="grid grid-cols-4 gap-4 min-w-[1000px]">
+          <!-- Backlog -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="backlog" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-gray-500 status-dot" style="color: #6b7280;"></span>
+                <h3 class="text-white font-semibold text-sm">Backlog</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="tareas-backlog"></div>
+          </div>
+
+          <!-- Esta Semana -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="esta-semana" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-blue status-dot" style="color: #3b82f6;"></span>
+                <h3 class="text-white font-semibold text-sm">Esta Semana</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="tareas-esta-semana">
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-blue" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="tareas-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">📋 Lista de 20 entrenadores</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Búsqueda en Instagram - perfiles activos con buena engagement</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 08 Mar</span>
+                </div>
+              </div>
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-blue" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="tareas-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✉️ Enviar 5 DMs al día</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Lunes a viernes, 15 min/día - script ya preparado</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 07 Mar</span>
+                </div>
+              </div>
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-blue" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="tareas-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🎯 1 demo agendada</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Objetivo semana 1 - 25 DMs → 1-2 demos</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 09 Mar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- En Curso -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="en-curso" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-yellow status-dot" style="color: #eab308;"></span>
+                <h3 class="text-white font-semibold text-sm">En Curso</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="tareas-en-curso"></div>
+          </div>
+
+          <!-- Hecho -->
+          <div class="kanban-column glass-card rounded-2xl p-4" data-status="hecho" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2.5">
+                <span class="w-3 h-3 rounded-full bg-accent-green status-dot" style="color: #22c55e;"></span>
+                <h3 class="text-white font-semibold text-sm">Completado</h3>
+              </div>
+              <span class="count-badge count">0</span>
+            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="tareas-hecho"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden" onclick="if(event.target===this) toggleSettings()">
+    <div class="flex items-center justify-center min-h-screen p-6">
+      <div class="glass-strong rounded-2xl p-6 max-w-md w-full border border-white/10 shadow-glass" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-bold text-white">Estadísticas</h3>
+          <button onclick="toggleSettings()" class="text-gray-500 hover:text-white transition-colors">
+            <svg class="w-5 h-5 icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+              <p class="text-gray-500 text-xs mb-1">Total tarjetas</p>
+              <p id="stat-total" class="text-2xl font-bold text-white">0</p>
+            </div>
+            <div class="p-4 rounded-xl bg-accent-green/10 border border-accent-green/20">
+              <p class="text-gray-500 text-xs mb-1">Completadas</p>
+              <p id="stat-done" class="text-2xl font-bold text-accent-green">0</p>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-brand-900/20 border border-brand-700/30">
+            <h4 class="text-sm font-semibold text-white mb-3">💡 Consejos</h4>
+            <ul class="text-xs text-gray-400 space-y-2 list-disc list-inside">
+              <li>Arrastra las tarjetas entre columnas para actualizar su estado</li>
+              <li>Tus cambios se guardan automáticamente en este navegador</li>
+              <li>Usa Ctrl+1, Ctrl+2, Ctrl+3 para cambiar entre tableros</li>
+              <li>Mueve las tareas completadas a "Completado" para ver tu progreso</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'app';
+
+    // Tab switching
+    function showTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.board').forEach(b => b.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      document.getElementById('board-' + tab).classList.remove('hidden');
+      document.getElementById('tab-' + tab).classList.add('active');
+      updateCounts();
+      updateStats();
+    }
+
+    // Drag and drop
+    function allowDrop(ev) { ev.preventDefault(); }
+    function dragEnter(ev) { ev.currentTarget.classList.add('drag-over'); }
+    function dragLeave(ev) { ev.currentTarget.classList.remove('drag-over'); }
+    function drag(ev) { 
+      ev.dataTransfer.setData("text", ev.target.dataset.id); 
+      ev.target.classList.add('dragging');
+    }
+    function dragEnd(ev) { ev.target.classList.remove('dragging'); }
+    function drop(ev) {
+      ev.preventDefault();
+      ev.currentTarget.classList.remove('drag-over');
+      var data = ev.dataTransfer.getData("text");
+      var card = document.querySelector('[data-id="' + data + '"]');
+      if (card) {
+        card.classList.remove('dragging');
+        // Remove empty state if exists
+        const emptyState = card.parentElement.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        card.parentElement.appendChild(card);
+        updateCounts();
+        updateStats();
+        saveBoard();
+      }
+    }
+
+    // Update counts
+    function updateCounts() {
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        const count = col.querySelector('.cards').children.length;
+        // Don't count empty-state
+        const actualCount = col.querySelectorAll('.cards .kanban-card').length;
+        col.querySelector('.count').textContent = actualCount;
+      });
+    }
+
+    // Update stats
+    function updateStats() {
+      let total = 0, done = 0;
+      document.querySelectorAll('.board:not(.hidden) .kanban-column').forEach(col => {
+        const cards = col.querySelectorAll('.cards .kanban-card').length;
+        total += cards;
+        if (col.dataset.status.includes('hecho') || col.dataset.status === 'cliente' || col.dataset.status === 'completado') {
+          done += cards;
+        }
+      });
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-done').textContent = done;
+    }
+
+    // Save to localStorage
+    function saveBoard() {
+      const boards = {};
+      document.querySelectorAll('.board').forEach(board => {
+        const boardId = board.id.replace('board-', '');
+        boards[boardId] = {};
+        board.querySelectorAll('.kanban-column').forEach(col => {
+          const status = col.dataset.status;
+          const cards = Array.from(col.querySelectorAll('.cards .kanban-card')).map(c => c.outerHTML);
+          boards[boardId][status] = cards;
+        });
+      });
+      localStorage.setItem('fitmanager-kanban-v3', JSON.stringify(boards));
+      const now = new Date();
+      document.getElementById('last-update').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    // Load from localStorage
+    function loadBoard() {
+      const saved = localStorage.getItem('fitmanager-kanban-v3');
+      if (saved) {
+        const boards = JSON.parse(saved);
+        Object.keys(boards).forEach(boardId => {
+          Object.keys(boards[boardId]).forEach(status => {
+            const container = document.querySelector(`#${boardId}-${status}`);
+            if (container && boards[boardId][status].length > 0) {
+              container.innerHTML = boards[boardId][status].join('');
+              // Re-attach events
+              container.querySelectorAll('.kanban-card').forEach(card => {
+                card.setAttribute('draggable', 'true');
+                card.ondragstart = drag;
+                card.ondragend = dragEnd;
+              });
+              // Remove empty states
+              const emptyStates = container.querySelectorAll('.empty-state');
+              emptyStates.forEach(e => e.remove());
+            }
+          });
+        });
+      }
+      updateCounts();
+      updateStats();
+      const now = new Date();
+      document.getElementById('last-update').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    // Reset
+    function resetBoard() {
+      if (confirm('¿Reiniciar el tablero? Se perderán los cambios no guardados.')) {
+        localStorage.removeItem('fitmanager-kanban-v3');
+        location.reload();
+      }
+    }
+
+    // Settings modal
+    function toggleSettings() {
+      const modal = document.getElementById('settings-modal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        updateStats();
+      }
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('settings-modal').classList.add('hidden');
+      }
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '1') showTab('app');
+        if (e.key === '2') showTab('ventas');
+        if (e.key === '3') showTab('tareas');
+        if (e.key === 'r') { e.preventDefault(); resetBoard(); }
+      }
+    });
+
+    // Init
+    loadBoard();
+    setInterval(saveBoard, 3000); // Auto-save every 3s
+    showTab('app');
+  </script>
+</body>
+</html>
