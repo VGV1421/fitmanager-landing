@@ -523,18 +523,7 @@
               </div>
               <span class="count-badge count">0</span>
             </div>
-            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso">
-              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-yellow" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-4">
-                <div class="flex items-start justify-between mb-2">
-                  <p class="text-white text-sm font-medium leading-snug">🔒 Revisar autorización en rutas admin</p>
-                </div>
-                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar AdminGuard en todas las páginas de administración</p>
-                <div class="flex items-center justify-between">
-                  <span class="priority-badge priority-critical">Crítica</span>
-                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
-                </div>
-              </div>
-            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso"></div>
 
           <!-- Hecho -->
           <div class="kanban-column glass-card rounded-2xl p-4" data-status="hecho" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
@@ -595,6 +584,17 @@
                   <p class="text-white text-sm font-medium leading-snug">✅ 🔒 Verificar API keys no expuestas en frontend</p>
                 </div>
                 <p class="text-gray-500 text-xs leading-relaxed mb-3">Auditar el código para asegurar que no hay credenciales expuestas</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-4">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🔒 Revisar autorización en rutas admin</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar AdminGuard en todas las páginas de administración</p>
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-critical">Crítica</span>
                   <span class="text-gray-600 text-xs">📅 10 Mar</span>
