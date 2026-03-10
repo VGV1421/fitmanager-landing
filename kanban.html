@@ -523,7 +523,18 @@
               </div>
               <span class="count-badge count">0</span>
             </div>
-            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso"></div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso">
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-yellow" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="test-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🧪 Implementar Jest + React Testing Library</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Configurar infraestructura básica de testing unitario</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+            </div>
 
           <!-- Hecho -->
           <div class="kanban-column glass-card rounded-2xl p-4" data-status="hecho" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
@@ -608,6 +619,28 @@
                 <p class="text-gray-500 text-xs leading-relaxed mb-3">VERIFICADO: El manejo de errores ya está implementado correctamente</p>
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="bug-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🐛 Fix validación en auth/login/route.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">VERIFICADO: La validación ya está implementada correctamente</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="bug-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🐛 Fix fuga de información en auth.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">VERIFICADO: No hay fuga de información, el middleware es seguro</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
                   <span class="text-gray-600 text-xs">📅 10 Mar</span>
                 </div>
               </div>
