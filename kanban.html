@@ -113,11 +113,12 @@
     .project-link { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
     .project-link:hover { transform: translateX(3px); background: rgba(124, 58, 237, 0.1); }
     
-    /* Status dots with glow */
+    /* Status dots */
     .status-dot { box-shadow: 0 0 8px currentColor; }
     
     /* Priority badges */
     .priority-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.02em; }
+    .priority-critical { background: rgba(139, 0, 0, 0.12); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.2); }
     .priority-high { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
     .priority-medium { background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
     .priority-low { background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
@@ -168,7 +169,7 @@
         <div class="flex items-center gap-6">
           <div class="text-right hidden sm:block">
             <p class="text-gray-600 text-xs uppercase tracking-wide font-medium">Actualizado</p>
-            <p class="text-gray-300 text-sm font-mono" id="last-update">12:37:47 PM</p>
+            <p class="text-gray-300 text-sm font-mono" id="last-update">12:00:01 PM</p>
           </div>
           <button onclick="resetBoard()" class="px-4 py-2.5 glass hover:bg-white/5 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-all hover:scale-105 active:scale-95" title="Volver al estado inicial">
             <svg class="w-4 h-4 icon inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +277,7 @@
             </svg>
             <span class="text-gray-500 text-xs uppercase tracking-wide">Balance Total</span>
           </div>
-          <p class="text-2xl font-bold text-white font-mono" id="stat-balance">$10,000.00</p>
+          <p class="text-2xl font-bold text-white font-mono" id="stat-balance">$1,567.38</p>
           <p class="text-gray-600 text-xs mt-1">USDT disponibles</p>
         </div>
         
@@ -287,34 +288,39 @@
             </svg>
             <span class="text-gray-500 text-xs uppercase tracking-wide">PnL Total</span>
           </div>
-          <p class="text-2xl font-bold text-accent-green font-mono" id="stat-pnl" class="text-accent-green">$+0.00</p>
-          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">+0.00%svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-            </svg>
-            <span class="text-gray-500 text-xs uppercase tracking-wide">Posiciones Abiertas</span>
-          </div>
-          <p class="text-2xl font-bold text-white font-mono" id="stat-positions">0/5</p>
-          <p class="text-gray-600 text-xs mt-1">Máximo 5 simultáneas</p>
+          <p class="text-2xl font-bold text-accent-green font-mono" id="stat-pnl" class="text-accent-red">$-11.95</p>
+          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">-0.12%</p>
         </div>
         
         <div class="glass-card rounded-xl p-4 border border-white/5">
           <div class="flex items-center gap-2 mb-2">
             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2m12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2M9 10l12-1"/>
+            </svg>
+            <span class="text-gray-500 text-xs uppercase tracking-wide">Operaciones</span>
+          </div>
+          <p class="text-2xl font-bold text-white font-mono" id="stat-trades">24</p>
+          <p class="text-gray-600 text-xs mt-1">Este mes</p>
+        </div>
+        
+        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
             <span class="text-gray-500 text-xs uppercase tracking-wide">Win Rate</span>
           </div>
-          <p class="text-2xl font-bold text-brand-400 font-mono" id="stat-winrate">0.0%</p>
-          <p class="text-gray-600 text-xs mt-1" id="stat-trades">0 trades totales</p>
+          <p class="text-2xl font-bold text-accent-blue font-mono" id="stat-winrate">45.8%</p>
+          <p class="text-gray-600 text-xs mt-1">Promedio mensual</p>
         </div>
       </div>
       
       <!-- Last Update -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/4/2026, 12:37:47 PM</span></span>
+          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/10/2026, 12:00:01 PM</span></span>
           <span class="text-gray-700 text-xs">•</span>
-          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/4/2026, 6:37:47 PM</span></span>
+          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/10/2026, 6:00:01 PM</span></span>
         </div>
         <a href="https://testnet.binance.vision/" target="_blank" class="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors flex items-center gap-1">
           Ver en Binance Testnet
@@ -340,7 +346,7 @@
                 <span class="w-3 h-3 rounded-full bg-gray-500 status-dot" style="color: #6b7280;"></span>
                 <h3 class="text-white font-semibold text-sm">Pendientes</h3>
               </div>
-              <span class="count-badge count">0</span>
+              <span class="count-badge count">17</span>
             </div>
             <div class="space-y-3 cards min-h-[300px]" id="app-por-hacer">
               <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="app-1">
@@ -351,6 +357,198 @@
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-high">Alta</span>
                   <span class="text-gray-600 text-xs">📅 Hoy</span>
+                </div>
+              </div>
+              
+              <!-- Testing Cards -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="testing-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🧪 Implementar Jest + React Testing Library</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Configurar framework de testing para componentes y funciones</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="testing-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🧪 Tests para componentes de autenticación</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Desarrollar tests unitarios e integración para módulos de login/signup</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="testing-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🧪 Tests para API routes</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar tests de integración para endpoints de la API</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="testing-4">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🧪 Configurar Playwright para E2E</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Configurar herramienta de testing end-to-end para flujos completos</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <!-- Security Cards -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔒 Validación de inputs en API routes</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar sanitización y validación de todos los inputs recibidos</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔒 Sanitización de formularios (XSS prevention)</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Prevenir ataques XSS sanitizando todos los inputs del usuario</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔒 Verificar API keys no expuestas en frontend</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Auditar el código para asegurar que no hay credenciales expuestas</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-4">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔒 Revisar autorización en rutas admin</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Validar que las rutas de administración tengan controles adecuados</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <!-- Bugs Cards -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="bugs-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🐛 Fix manejo de errores en clientes/actions.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Corregir manejo de errores en operaciones de clientes</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="bugs-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🐛 Fix validación en auth/[...nextauth]/route.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Corregir problemas de validación en rutas de autenticación</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="bugs-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🐛 Fix fuga de información en auth.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Cerrar brecha de seguridad que expone información sensible</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <!-- Refactoring Cards -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔄 Eliminar duplicación en login/signup</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Eliminar código repetido en formularios de autenticación</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔄 Añadir tipado TypeScript en src/app/api/*</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Agregar tipado fuerte a todos los archivos de API</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔄 Refactorizar funciones largas en utils/auth.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Dividir funciones complejas en unidades más pequeñas y manejables</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-4">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">🔄 Implementar lazy loading en dashboard</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Optimizar rendimiento con carga diferida de componentes</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <!-- Performance Cards -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="perf-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">⚡ Optimizar consultas N+1 a Supabase</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Reducir número de consultas a la base de datos optimizando joins</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="perf-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">⚡ Reducir bundle size inicial</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Optimizar tamaño del paquete para mejorar tiempos de carga</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
+                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
                 </div>
               </div>
             </div>
@@ -584,7 +782,7 @@
           <div class="grid grid-cols-2 gap-3">
             <div class="p-4 rounded-xl bg-white/5 border border-white/5">
               <p class="text-gray-500 text-xs mb-1">Total tarjetas</p>
-              <p id="stat-total" class="text-2xl font-bold text-white">0</p>
+              <p id="stat-total" class="text-2xl font-bold text-white">17</p>
             </div>
             <div class="p-4 rounded-xl bg-accent-green/10 border border-accent-green/20">
               <p class="text-gray-500 text-xs mb-1">Completadas</p>
