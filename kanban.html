@@ -889,10 +889,12 @@
       document.getElementById('last-update').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
-    // Load from localStorage
+    // Load from localStorage OR use HTML defaults
     function loadBoard() {
       const saved = localStorage.getItem('fitmanager-kanban-v5');
+      
       if (saved) {
+        // Load from localStorage
         const boards = JSON.parse(saved);
         Object.keys(boards).forEach(boardId => {
           Object.keys(boards[boardId]).forEach(status => {
@@ -912,6 +914,8 @@
           });
         });
       }
+      // Si no hay localStorage, usa las tarjetas que ya están en el HTML (default)
+      
       updateCounts();
       updateStats();
       const now = new Date();
