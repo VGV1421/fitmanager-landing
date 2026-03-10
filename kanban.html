@@ -169,7 +169,7 @@
         <div class="flex items-center gap-6">
           <div class="text-right hidden sm:block">
             <p class="text-gray-600 text-xs uppercase tracking-wide font-medium">Actualizado</p>
-            <p class="text-gray-300 text-sm font-mono" id="last-update">12:00:01 PM</p>
+            <p class="text-gray-300 text-sm font-mono" id="last-update">6:00:01 PM</p>
           </div>
           <button onclick="resetBoard()" class="px-4 py-2.5 glass hover:bg-white/5 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-all hover:scale-105 active:scale-95" title="Volver al estado inicial">
             <svg class="w-4 h-4 icon inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,7 +289,7 @@
             <span class="text-gray-500 text-xs uppercase tracking-wide">PnL Total</span>
           </div>
           <p class="text-2xl font-bold text-accent-green font-mono" id="stat-pnl" class="text-accent-red">$-11.95</p>
-          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">-0.12%</p>
+          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">-0.12%/p>
         </div>
         
         <div class="glass-card rounded-xl p-4 border border-white/5">
@@ -299,7 +299,7 @@
             </svg>
             <span class="text-gray-500 text-xs uppercase tracking-wide">Operaciones</span>
           </div>
-          <p class="text-2xl font-bold text-white font-mono" id="stat-trades">24</p>
+          <p class="text-2xl font-bold text-white font-mono" id="stat-trades">28 trades totales</p>
           <p class="text-gray-600 text-xs mt-1">Este mes</p>
         </div>
         
@@ -310,7 +310,7 @@
             </svg>
             <span class="text-gray-500 text-xs uppercase tracking-wide">Win Rate</span>
           </div>
-          <p class="text-2xl font-bold text-accent-blue font-mono" id="stat-winrate">45.8%</p>
+          <p class="text-2xl font-bold text-accent-blue font-mono" id="stat-winrate">42.9%</p>
           <p class="text-gray-600 text-xs mt-1">Promedio mensual</p>
         </div>
       </div>
@@ -318,9 +318,9 @@
       <!-- Last Update -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/10/2026, 12:00:01 PM</span></span>
+          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/10/2026, 6:00:01 PM</span></span>
           <span class="text-gray-700 text-xs">•</span>
-          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/10/2026, 6:00:01 PM</span></span>
+          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/11/2026, 12:00:01 AM</span></span>
         </div>
         <a href="https://testnet.binance.vision/" target="_blank" class="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors flex items-center gap-1">
           Ver en Binance Testnet
@@ -406,28 +406,6 @@
               </div>
               
               <!-- Security Cards -->
-              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-1">
-                <div class="flex items-start justify-between mb-2">
-                  <p class="text-white text-sm font-medium leading-snug">🔒 Validación de inputs en API routes</p>
-                </div>
-                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar sanitización y validación de todos los inputs recibidos</p>
-                <div class="flex items-center justify-between">
-                  <span class="priority-badge priority-critical">Crítica</span>
-                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
-                </div>
-              </div>
-              
-              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-2">
-                <div class="flex items-start justify-between mb-2">
-                  <p class="text-white text-sm font-medium leading-snug">🔒 Sanitización de formularios (XSS prevention)</p>
-                </div>
-                <p class="text-gray-500 text-xs leading-relaxed mb-3">Prevenir ataques XSS sanitizando todos los inputs del usuario</p>
-                <div class="flex items-center justify-between">
-                  <span class="priority-badge priority-critical">Crítica</span>
-                  <span class="text-gray-600 text-xs">📅 Roadmap</span>
-                </div>
-              </div>
-              
               <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-gray-500 hover:border-brand-500" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-3">
                 <div class="flex items-start justify-between mb-2">
                   <p class="text-white text-sm font-medium leading-snug">🔒 Verificar API keys no expuestas en frontend</p>
@@ -594,6 +572,29 @@
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-high">Alta</span>
                   <span class="text-gray-600 text-xs">📅 02 Mar</span>
+                </div>
+              </div>
+              
+              <!-- Security Completed -->
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-1">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🔒 Validación de inputs en API routes</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Implementar sanitización y validación de todos los inputs recibidos</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="security-2">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🔒 Sanitización de formularios (XSS prevention)</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Prevenir ataques XSS sanitizando todos los inputs del usuario</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-critical">Crítica</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
                 </div>
               </div>
             </div>
