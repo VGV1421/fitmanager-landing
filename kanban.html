@@ -885,14 +885,14 @@
           boards[boardId][status] = cards;
         });
       });
-      localStorage.setItem('fitmanager-kanban-v5', JSON.stringify(boards));
+      localStorage.setItem('fitmanager-kanban-v6', JSON.stringify(boards));
       const now = new Date();
       document.getElementById('last-update').textContent = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
     // Load from localStorage OR use HTML defaults
     function loadBoard() {
-      const saved = localStorage.getItem('fitmanager-kanban-v5');
+      const saved = localStorage.getItem('fitmanager-kanban-v6');
       
       if (saved) {
         // Load from localStorage
@@ -926,7 +926,7 @@
     // Reset
     function resetBoard() {
       if (confirm('¿Reiniciar el tablero? Se perderán los cambios no guardados.')) {
-        localStorage.removeItem('fitmanager-kanban-v5');
+        localStorage.removeItem('fitmanager-kanban-v6');
         location.reload();
       }
     }
