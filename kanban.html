@@ -523,18 +523,7 @@
               </div>
               <span class="count-badge count">0</span>
             </div>
-            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso">
-              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-yellow" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-3">
-                <div class="flex items-start justify-between mb-2">
-                  <p class="text-white text-sm font-medium leading-snug">🔧 Refactorizar funciones largas en utils/auth.ts</p>
-                </div>
-                <p class="text-gray-500 text-xs leading-relaxed mb-3">Dividir funciones de +100 líneas en funciones más pequeñas y testeables</p>
-                <div class="flex items-center justify-between">
-                  <span class="priority-badge priority-medium">Media</span>
-                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
-                </div>
-              </div>
-            </div>
+            <div class="space-y-3 cards min-h-[300px]" id="app-en-progreso"></div>
 
           <!-- Hecho -->
           <div class="kanban-column glass-card rounded-2xl p-4" data-status="hecho" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
@@ -707,6 +696,17 @@
                 <p class="text-gray-500 text-xs leading-relaxed mb-3">Creados tipos en src/types/api.ts + aplicados en API de clientes</p>
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="refactor-3">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🔧 Refactorizar funciones largas en utils/auth.ts</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">VERIFICADO: Las funciones ya están bien estructuradas (<60 líneas)</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-medium">Media</span>
                   <span class="text-gray-600 text-xs">📅 10 Mar</span>
                 </div>
               </div>
