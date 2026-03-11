@@ -169,7 +169,7 @@
         <div class="flex items-center gap-6">
           <div class="text-right hidden sm:block">
             <p class="text-gray-600 text-xs uppercase tracking-wide font-medium">Actualizado</p>
-            <p class="text-gray-300 text-sm font-mono" id="last-update">6:00:01 PM</p>
+            <p class="text-gray-300 text-sm font-mono" id="last-update">6:00:02 AM</p>
           </div>
           <button onclick="resetBoard()" class="px-4 py-2.5 glass hover:bg-white/5 rounded-xl text-gray-400 hover:text-white text-sm font-medium transition-all hover:scale-105 active:scale-95" title="Volver al estado inicial">
             <svg class="w-4 h-4 icon inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,10 +289,7 @@
             <span class="text-gray-500 text-xs uppercase tracking-wide">PnL Total</span>
           </div>
           <p class="text-2xl font-bold text-accent-green font-mono" id="stat-pnl" class="text-accent-red">$-11.95</p>
-          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">-0.12%/p>
-        </div>
-        
-        <div class="glass-card rounded-xl p-4 border border-white/5">
+          <p class="text-gray-600 text-xs mt-1" id="stat-pnl-percent">-0.12%div class="glass-card rounded-xl p-4 border border-white/5">
           <div class="flex items-center gap-2 mb-2">
             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2m12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2M9 10l12-1"/>
@@ -318,9 +315,9 @@
       <!-- Last Update -->
       <div class="mt-4 flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/10/2026, 6:00:01 PM</span></span>
+          <span class="text-gray-600 text-xs">Última actualización: <span class="text-gray-400 font-mono" id="crypto-last-update">3/11/2026, 6:00:02 AM</span></span>
           <span class="text-gray-700 text-xs">•</span>
-          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/11/2026, 12:00:01 AM</span></span>
+          <span class="text-gray-600 text-xs">Próxima: <span class="text-gray-400 font-mono" id="crypto-next-update">3/11/2026, 12:00:02 PM</span></span>
         </div>
         <a href="https://testnet.binance.vision/" target="_blank" class="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors flex items-center gap-1">
           Ver en Binance Testnet
@@ -675,6 +672,17 @@
                 <div class="flex items-center justify-between">
                   <span class="priority-badge priority-medium">Media</span>
                   <span class="text-gray-600 text-xs">📅 10 Mar</span>
+                </div>
+              </div>
+              
+              <div class="kanban-card glass-card rounded-xl p-4 border-l-4 border-accent-green" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" data-id="test-5">
+                <div class="flex items-start justify-between mb-2">
+                  <p class="text-white text-sm font-medium leading-snug">✅ 🧪 Batería completa de tests (45 tests)</p>
+                </div>
+                <p class="text-gray-500 text-xs leading-relaxed mb-3">Tests unitarios, componentes, API y E2E para todas las funcionalidades</p>
+                <div class="flex items-center justify-between">
+                  <span class="priority-badge priority-high">Alta</span>
+                  <span class="text-gray-600 text-xs">📅 11 Mar</span>
                 </div>
               </div>
               
